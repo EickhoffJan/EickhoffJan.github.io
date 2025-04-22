@@ -1,14 +1,18 @@
-body {
+html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
   font-family: 'Helvetica Neue', sans-serif;
   background-color: #ffffff;
   color: #111;
+}
+
+.center-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  height: 100vh;
+  align-items: center;
+  height: 100%;
   text-align: center;
 }
 
@@ -33,9 +37,4 @@ a {
 
 a:hover {
   color: #0051a3;
-}
-
-main {
-  text-align: center;
-  margin-top: 2em;
 }
