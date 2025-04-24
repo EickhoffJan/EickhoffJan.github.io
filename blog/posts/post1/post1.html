@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>On the Noetherian Property of Rings as Modules over Larger Rings – Jan Eickhoff</title>
+  <!-- Use an absolute path so the stylesheet resolves correctly in all subdirectories -->
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+</head>
+<body>
+  <div class="post-wrapper">
+    <!-- Blog post article -->
+    <article>
+      <header>
+        <h1>On the Noetherian Property of Rings as Modules over Larger Rings</h1>
+        <p class="meta">
+          <time datetime="2025-04-24">April 24, 2025</time>
+        </p>
+      </header>
+
+      Let a ring in the following text be defined as a commutative ring with unity.
+      <h2>Question</h2>
+      <p>Let \( R \subseteq S \) be rings. Then, if \( R \) is Noetherian as an \( S \)-module, is \( R \) also Noetherian as an \( R \)-module?
+      </p>
+      <p>At first glance one might expect “yes,” but the following counterexample shows that, in complete generality, the answer is <em>no</em>.</p>
+
+      <h3>Counterexample</h3>
+      <p>Let \(K\) be a field,</p>
+      <p>
+        \[
+          R = K[x_1,x_2,\dots], 
+          \quad 
+          S = \text{End}_K(R),
+        \]
+      </p>
+      <p>and embed \(R\) into \(S\) via</p>
+      <p>
+        \[
+          \iota\colon R \; \hookrightarrow \; S,
+          \quad
+          r \;\mapsto\; \phi_r,
+        \]
+      </p>
+      <p>where \(\phi_r\) is the endomorphism \(x\mapsto r\,x\).  We view \(R\) as an \(S\)-module by</p>
+      <p>
+        \[
+          f\cdot x \;=\; f(x),
+          \quad
+          f\in S,\ x\in R.
+        \]
+      </p>
+      <p>Note that this is <em>not</em> the usual multiplication in \(R\).</p>
+      <p>Let \(x \in R\) be nonzero.  Then
+          \[
+            S\cdot x = \{\,f(x)\mid f\in S\}\subseteq R.
+          \]
+          Given any \(y\in R\), extend \(x\) to a \(K\)-basis \(B\) of the vector space \(R\).  Define a \(K\)-linear map
+          \[
+            f\colon R\to R,\quad f(x)=y,\quad f(b)=0\ \text{for }b\in B\setminus\{x\}.
+          \]
+          This map is well-defined, linear, and extends uniquely to \( R \).
+          Hence \(f\in S\) and \(f(x)=y\).  Hence \(S\cdot x=R\).
+      </p>
+      <p>Thus every nonzero element generates the entire \(S\)-module, 
+        so \(R\) is simple—and hence Noetherian—as an \(S\)-module.  
+        On the other hand, \(R=K[x_1,x_2,\dots]\) is not Noetherian as a ring, 
+        and therefore not Noetherian as an \(R\)-module.</p>
+
+      <h2>The General Factorization Case</h2>
+      <p>We now impose that the \(S\)-action on \(R\) factors through \(R\) itself.</p>
+
+      <div class="theorem">
+        <h3>Theorem (General Factorization)</h3>
+        <p>Let \( R \subseteq S \) be rings, and suppose that \( R \) carries the structure of an 
+          \( S \)-module, where the \( S \)-action factors through \( R \). Then every \( R \)-submodule of \( R \) 
+          is already an \( S \)-submodule.</p>
+      </div>
+      <div class="proof">
+        <h4>Proof.</h4>
+        <p>
+          Consider the ring homomorphism \( \varphi : S \to R \) through which the \( S \)-action on \( R \) is defined. Accordingly, for all \( s \in S \) and \( r \in R \), we have
+          \[
+          s \cdot r = \varphi(s) \cdot r.
+          \]
+          Let \( M \subseteq R \) be an \( R \)-submodule. Then the \( S \)-action on \( M \) satisfies
+          \[
+          S \cdot M = \varphi(S) \cdot M \subseteq R \cdot M \subseteq M.
+          \]
+          Hence, \( M \) is closed under the \( S \)-action and thus constitutes an \( S \)-submodule of \( R \).
+
+        </p>
+      </div>
+
+      <div class="corollary">
+        <h3>Corollary</h3>
+        <p>Under the hypotheses of the General Factorization Theorem, if \(R\) is Noetherian as an \(S\)-module, then \(R\) is Noetherian as an \(R\)-module.</p>
+      </div>
+
+      <h2>The Surjective Case</h2>
+      <p>Next, we consider the situation where \(R\) is a quotient of \(S\).</p>
+
+      <div class="theorem">
+        <h3>Theorem (Surjective Case)</h3>
+        <p>
+          Let \( R \subseteq S \) be rings, and let \( I \subseteq S \) be an ideal such that
+          \[
+          R \cong S/I.
+          \]
+          In particular, \( R \) acquires the natural structure of an \( S \)-module. 
+          Under this identification, the \( S \)-submodules and \( R \)-submodules of \( R \) coincide.
+        </p>
+      </div>
+      <div class="proof">
+        <h4>Proof.</h4>
+        <p>
+          Consider the canonical surjective ring homomorphism \( \pi : S \to S/I \) through which the action of \( S \) on \( R \) is defined. Then, for all \( s \in S \) and \( r \in R \), the following holds:
+          \[
+          s \cdot r = \pi(s) \cdot r.
+          \]
+          Let \( N \subseteq R \) be an \( S \)-submodule of \( R \). Then,
+          \[
+          R \cdot N = \pi(S) \cdot N = S \cdot N \subseteq N.
+          \]
+          Thus, \( N \) is stable under the \( R \)-action, implying that \( N \) is also an \( R \)-submodule of \( R \). In view of the General Factorization Theorem, it follows that the \( S \)- and \( R \)-submodule structures on \( R \) are identical.
+        </p>
+      </div>
+
+      <div class="corollary">
+        <h3>Corollary</h3>
+        <p>Under the hypotheses of the Surjective Case, \(R\) is Noetherian as an \(S\)-module if and only if \(R\) is Noetherian as an \(R\)-module.</p>
+      </div>
+
+      <h3>Example</h3>
+      <p>Let \(R\) be any ring.  Consider the evaluation homomorphism</p>
+      <p>
+        \[
+          \varphi\colon R[x]\to R,\quad f(x)\mapsto f(0).
+        \]
+      </p>
+      <p>Then \(R\) becomes an \(R[x]\)-module by \(f\cdot r = f(0)\,r\).  Since \(R\cong R[x]/(x)\), this falls under the Surjective Case, and one sees immediately that \(R\) is Noetherian as an \(R[x]\)-module exactly when it is Noetherian as a ring.</p>
+
+      <footer class="post-footer">
+        <p><a href="/blog/">← Back to overview</a></p>
+      </footer>
+    </article>
+
+    <!-- Main site navigation -->
+    <nav>
+      <a href="/">Home</a>
+      <a href="/about/">About</a>
+      <a href="/interests/">Interests</a>
+      <a href="/teaching/">Teaching</a>
+      <a href="/projects/">Projects</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+  </div>
+</body>
+</html>
+
