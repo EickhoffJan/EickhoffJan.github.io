@@ -40,6 +40,10 @@ nav {
   flex-wrap: wrap;
 }
 
+nav a.active {
+  font-weight: bold;
+}
+
 a {
   text-decoration: none;
   color: #000000;
@@ -50,6 +54,7 @@ a {
 a:hover {
   color: #989898;
 }
+
 
 p {
   max-width: 600px;
@@ -71,6 +76,8 @@ p {
   hyphens: auto;               /* automatische Silbentrennung */
 }
 
+
+
 /* 3. Letzte Zeile immer linksbündig statt zentriert */
 .teaching-block p:last-child,
 .teaching-block ul:last-child li:last-child {
@@ -90,7 +97,10 @@ p {
 }
 
 
-
+.left-block ul,
+.left-block li {
+  text-align: left;
+}
 
 
 #three-container {
