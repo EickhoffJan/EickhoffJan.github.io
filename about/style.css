@@ -74,6 +74,7 @@ p {
   text-align: justify;         /* links/rechts bündig */
   text-justify: inter-word;    /* Wortzwischenräume für Browser, die es unterstützen */
   hyphens: auto;               /* automatische Silbentrennung */
+  text-align: left;
 }
 
 
