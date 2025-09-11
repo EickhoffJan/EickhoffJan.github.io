@@ -1,148 +1,157 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Jan Eickhoff</title>
-  <link rel="stylesheet" href="./style.css">
-  <script type="importmap">
-    {
-      "imports": {
-        "three": 
-          "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
-        "three/examples/": 
-          "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/"
+  <head>
+    <meta charset="UTF-8" />
+    <title>Jan Eickhoff</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
+          "three/examples/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/"
+        }
       }
-    }
     </script>
-</head>
-<body>
-  <div class="center-wrapper">
-    <div id="three-container" style="width: 400px; height: 400px;"></div>
-    <h1>Jan Eickhoff</h1>
-    <nav>
-      <a href="/" class="active">Home</a>
-      <a href="/about/">About</a>
-      <a href="/interests/">Interests</a>
-      <a href="/teaching/">Teaching</a>
-      <a href="/projects/">Projects</a>
-      <a href="/blog/">Blog</a>
-      <a href="/contact/">Contact</a>
-    </nav>
-  </div>
-  <script type="module">
-    import * as THREE from 'three';
-    import { ParametricGeometry } 
-      from 'three/examples/jsm/geometries/ParametricGeometry.js';
-    import { EdgesGeometry, LineSegments, LineBasicMaterial }
-      from 'three';
-    // --- direkt nach den Imports ---
-    const container = document.getElementById('three-container');
-    const scene     = new THREE.Scene();
-    const camera    = new THREE.PerspectiveCamera(45, container.clientWidth/container.clientHeight, 0.1, 1000);
-    camera.position.z = 10;
+  </head>
+  <body>
+    <div class="center-wrapper">
+      <div id="three-container" style="width: 400px; height: 400px"></div>
+      <h1>Jan etse Eickhoff</h1>
+      <nav>
+        <a href="/" class="active">Home</a>
+        <a href="/about/">About</a>
+        <a href="/interests/">Interests</a>
+        <a href="/teaching/">Teaching</a>
+        <a href="/projects/">Projects</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact/">Contact</a>
+      </nav>
+    </div>
+    <script type="module">
+      import * as THREE from "three";
+      import { ParametricGeometry } from "three/examples/jsm/geometries/ParametricGeometry.js";
+      import { EdgesGeometry, LineSegments, LineBasicMaterial } from "three";
+      // --- direkt nach den Imports ---
+      const container = document.getElementById("three-container");
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        45,
+        container.clientWidth / container.clientHeight,
+        0.1,
+        1000,
+      );
+      camera.position.z = 10;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setClearColor(0xffffff);
-    container.appendChild(renderer.domElement)
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setClearColor(0xffffff);
+      container.appendChild(renderer.domElement);
 
-    // Hilfsfunktionen für komplexe Arithmetik
-    function cmul([a,b], [c,d]) { return [a*c - b*d, a*d + b*c]; }
-    function cadd([a,b], [c,d]) { return [a+c, b+d]; }
-    function csub([a,b], [c,d]) { return [a-c, b-d]; }
-    function cdiv([a,b], [c,d]) {
-      const denom = c*c + d*d;
-      return [(a*c + b*d)/denom, (b*c - a*d)/denom];
-    }
+      // Hilfsfunktionen für komplexe Arithmetik
+      function cmul([a, b], [c, d]) {
+        return [a * c - b * d, a * d + b * c];
+      }
+      function cadd([a, b], [c, d]) {
+        return [a + c, b + d];
+      }
+      function csub([a, b], [c, d]) {
+        return [a - c, b - d];
+      }
+      function cdiv([a, b], [c, d]) {
+        const denom = c * c + d * d;
+        return [(a * c + b * d) / denom, (b * c - a * d) / denom];
+      }
 
-    // Deine Geometrie-Fabrik für Bryant–Kusner
-    const makeGeometry = () => new ParametricGeometry(
-      (u, v, target) => {
-        // 1) Map (u,v) ∈ [0,1]² → t ∈ ℂ, |t|≤1
-        const r     = u;
-        const theta = v * Math.PI * 2;
-        const t     = [ r * Math.cos(theta), r * Math.sin(theta) ];
+      // Deine Geometrie-Fabrik für Bryant–Kusner
+      const makeGeometry = () =>
+        new ParametricGeometry(
+          (u, v, target) => {
+            // 1) Map (u,v) ∈ [0,1]² → t ∈ ℂ, |t|≤1
+            const r = u;
+            const theta = v * Math.PI * 2;
+            const t = [r * Math.cos(theta), r * Math.sin(theta)];
 
-        // 2) Potenzen t², t³, t⁴, t⁶
-        const t2 = cmul(t, t);
-        const t4 = cmul(t2, t2);
-        const t3 = cmul(t2, t);
-        const t6 = cmul(t3, t3);
+            // 2) Potenzen t², t³, t⁴, t⁶
+            const t2 = cmul(t, t);
+            const t4 = cmul(t2, t2);
+            const t3 = cmul(t2, t);
+            const t6 = cmul(t3, t3);
 
-        // 3) Denominator: D = t⁶ + √5·t³ − 1
-        const sqrt5 = Math.sqrt(5);
-        let D = cadd( t6, [ sqrt5 * t3[0], sqrt5 * t3[1] ] );
-        D = csub( D, [1, 0] );
+            // 3) Denominator: D = t⁶ + √5·t³ − 1
+            const sqrt5 = Math.sqrt(5);
+            let D = cadd(t6, [sqrt5 * t3[0], sqrt5 * t3[1]]);
+            D = csub(D, [1, 0]);
 
-        // 4) g₁ = −3/2 · Im[ t·(1 − t⁴) / D ]
-        const num1 = cmul( t, csub([1,0], t4) );
-        const q1   = cdiv( num1, D );
-        const g1   = -1.5 * q1[1];
+            // 4) g₁ = −3/2 · Im[ t·(1 − t⁴) / D ]
+            const num1 = cmul(t, csub([1, 0], t4));
+            const q1 = cdiv(num1, D);
+            const g1 = -1.5 * q1[1];
 
-        // 5) g₂ = −3/2 · Re[ t·(1 + t⁴) / D ]
-        const num2 = cmul( t, cadd([1,0], t4) );
-        const q2   = cdiv( num2, D );
-        const g2   = -1.5 * q2[0];
+            // 5) g₂ = −3/2 · Re[ t·(1 + t⁴) / D ]
+            const num2 = cmul(t, cadd([1, 0], t4));
+            const q2 = cdiv(num2, D);
+            const g2 = -1.5 * q2[0];
 
-        // 6) g₃ = Im[ (1 + t⁶) / D ] − 1/2
-        const num3 = cadd( [1,0], t6 );
-        const q3   = cdiv( num3, D );
-        const g3   = q3[1] - 0.5;
+            // 6) g₃ = Im[ (1 + t⁶) / D ] − 1/2
+            const num3 = cadd([1, 0], t6);
+            const q3 = cdiv(num3, D);
+            const g3 = q3[1] - 0.5;
 
-        // 7) Normierung auf die Einheitssphäre
-        const norm = 1 / (g1*g1 + g2*g2 + g3*g3);
-        const x    = g1 * norm;
-        const y    = g2 * norm;
-        const z    = g3 * norm;
+            // 7) Normierung auf die Einheitssphäre
+            const norm = 1 / (g1 * g1 + g2 * g2 + g3 * g3);
+            const x = g1 * norm;
+            const y = g2 * norm;
+            const z = g3 * norm;
 
-        target.set(x, y, z);
-      },
-      100,  // U-Segmente (r)
-      100   // V-Segmente (θ)
-    );
+            target.set(x, y, z);
+          },
+          100, // U-Segmente (r)
+          100, // V-Segmente (θ)
+        );
 
-    // … und im Hauptcode dann wie gehabt:
+      // … und im Hauptcode dann wie gehabt:
 
-    const material = new THREE.MeshLambertMaterial({
-      color: 0xAAAAAA,
-      side: THREE.DoubleSide,
-      transparent: true,  
-      opacity: 0.3,        // Wert zwischen 0 (unsichtbar) und 1 (undurchsichtig)
-      depthWrite: false, // damit du auch die Rückseiten siehst
-      flatShading: true
-    });
+      const material = new THREE.MeshLambertMaterial({
+        color: 0xaaaaaa,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.3, // Wert zwischen 0 (unsichtbar) und 1 (undurchsichtig)
+        depthWrite: false, // damit du auch die Rückseiten siehst
+        flatShading: true,
+      });
 
-    let mesh = new THREE.Mesh(makeGeometry(), material);
-    mesh.scale.set(2, 2, 2);   // optional: Gesamt-Skalierung für bessere Sichtbarkeit
-    scene.add(mesh);
-    const amb = new THREE.AmbientLight(0xffffff, 0.4);
-    const dir = new THREE.DirectionalLight(0xffffff, 0.8);
-    dir.position.set(5,5,5);
-    scene.add(amb, dir);
+      let mesh = new THREE.Mesh(makeGeometry(), material);
+      mesh.scale.set(2, 2, 2); // optional: Gesamt-Skalierung für bessere Sichtbarkeit
+      scene.add(mesh);
+      const amb = new THREE.AmbientLight(0xffffff, 0.4);
+      const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+      dir.position.set(5, 5, 5);
+      scene.add(amb, dir);
 
+      const edges = new EdgesGeometry(makeGeometry());
+      const outline = new LineSegments(
+        edges,
+        new LineBasicMaterial({
+          color: 0x303030,
+          transparent: true,
+          opacity: 0.6,
+        }),
+      );
+      outline.scale.set(2, 2, 2); // optional: Gesamt-Skalierung für bessere Sichtbarkeit
+      scene.add(outline);
 
-    const edges = new EdgesGeometry(makeGeometry());
-    const outline = new LineSegments(
-      edges,
-      new LineBasicMaterial({ color: 0x303030, transparent: true, opacity: 0.6 })
-    );
-    outline.scale.set(2, 2, 2);   // optional: Gesamt-Skalierung für bessere Sichtbarkeit
-    scene.add(outline);
+      // In der animate-Funktion weiter rotieren lassen:
+      function animate() {
+        requestAnimationFrame(animate);
+        mesh.rotation.x += 0.004;
+        mesh.rotation.y += 0.004;
+        // Outline synchron drehen
+        outline.rotation.x = mesh.rotation.x;
+        outline.rotation.y = mesh.rotation.y;
 
-    // In der animate-Funktion weiter rotieren lassen:
-    function animate() {
-      requestAnimationFrame(animate);
-      mesh.rotation.x += 0.004;
-      mesh.rotation.y += 0.004;
-      // Outline synchron drehen
-      outline.rotation.x = mesh.rotation.x;
-      outline.rotation.y = mesh.rotation.y;
-
-      renderer.render(scene, camera);
-    }
-    animate();
-
-  </script>
-
-</body>
+        renderer.render(scene, camera);
+      }
+      animate();
+    </script>
+  </body>
 </html>
