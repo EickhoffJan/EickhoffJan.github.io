@@ -2,157 +2,363 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Jan Eickhoff</title>
-    <link rel="stylesheet" href="./style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jan Eickhoff - Tangent Space Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css?v=8" />
+    <!-- Three.js and Tween.js Import Map -->
     <script type="importmap">
       {
         "imports": {
           "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
-          "three/examples/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/"
+          "three/examples/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/",
+          "@tweenjs/tween.js": "https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@21.0.0/dist/tween.esm.js"
         }
       }
     </script>
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        svg: {
+          fontCache: 'global'
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   </head>
   <body>
-    <div class="center-wrapper">
-      <div id="three-container" style="width: 400px; height: 400px"></div>
-      <h1>Jan Eickhoff</h1>
-      <nav>
-        <a href="/" class="active">Home</a>
-        <a href="/about/">About</a>
-        <a href="/interests/">Interests</a>
-        <a href="/teaching/">Teaching</a>
-        <a href="/research/">Research</a>
-        <a href="/projects/">Projects</a>
-        <a href="/blog/">Blog</a>
-        <a href="/contact/">Contact</a>
-      </nav>
+    <!-- Background Canvas Container -->
+    <div id="canvas-container">
+      <canvas id="three-canvas"></canvas>
     </div>
-    <script type="module">
-      import * as THREE from "three";
-      import { ParametricGeometry } from "three/examples/jsm/geometries/ParametricGeometry.js";
-      import { EdgesGeometry, LineSegments, LineBasicMaterial } from "three";
-      // --- direkt nach den Imports ---
-      const container = document.getElementById("three-container");
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(
-        45,
-        container.clientWidth / container.clientHeight,
-        0.1,
-        1000,
-      );
-      camera.position.z = 10;
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.setClearColor(0xffffff);
-      container.appendChild(renderer.domElement);
+    <!-- Global Navigation -->
+    <header class="glass-header">
+      <div class="logo">JE</div>
+      <nav id="main-nav">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#interests" class="nav-link">Interests</a>
+        <a href="#teaching" class="nav-link">Teaching</a>
+        <a href="#research" class="nav-link">Research</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <!-- <a href="#blog" class="nav-link">Blog</a> -->
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+    </header>
 
-      // Hilfsfunktionen für komplexe Arithmetik
-      function cmul([a, b], [c, d]) {
-        return [a * c - b * d, a * d + b * c];
-      }
-      function cadd([a, b], [c, d]) {
-        return [a + c, b + d];
-      }
-      function csub([a, b], [c, d]) {
-        return [a - c, b - d];
-      }
-      function cdiv([a, b], [c, d]) {
-        const denom = c * c + d * d;
-        return [(a * c + b * d) / denom, (b * c - a * d) / denom];
-      }
+    <!-- Scrollable Content -->
+    <main id="scroll-content">
+      <section id="home" class="section hero-section">
+        <div class="hero-content reveal" style="margin-top: 60vh;">
+          <h1>Jan Eickhoff</h1>
+          <p class="subtitle" style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 1.5rem; letter-spacing: 2px; text-transform: uppercase;">Student of Mathematics</p>
+          <p class="hint">Scroll to explore ↓</p>
+        </div>
+      </section>
 
-      // Deine Geometrie-Fabrik für Bryant–Kusner
-      const makeGeometry = () =>
-        new ParametricGeometry(
-          (u, v, target) => {
-            // 1) Map (u,v) ∈ [0,1]² → t ∈ ℂ, |t|≤1
-            const r = u;
-            const theta = v * Math.PI * 2;
-            const t = [r * Math.cos(theta), r * Math.sin(theta)];
+      <section id="about" class="section">
+        <div class="content-card reveal">
+          <h2>About Me</h2>
+          <p>I am a Mathematics Bachelor's student at the Technical University of Munich.</p>
+        </div>
+      </section>
 
-            // 2) Potenzen t², t³, t⁴, t⁶
-            const t2 = cmul(t, t);
-            const t4 = cmul(t2, t2);
-            const t3 = cmul(t2, t);
-            const t6 = cmul(t3, t3);
+      <section id="interests" class="section">
+        <div class="content-card reveal">
+          <h2>Interests</h2>
+          <p>My interests include algebra, geometry, and topology.</p>
+        </div>
+      </section>
 
-            // 3) Denominator: D = t⁶ + √5·t³ − 1
-            const sqrt5 = Math.sqrt(5);
-            let D = cadd(t6, [sqrt5 * t3[0], sqrt5 * t3[1]]);
-            D = csub(D, [1, 0]);
+      <section id="teaching" class="section">
+        <div class="content-card reveal">
+          <h2>Teaching</h2>
+          <p style="margin-bottom: 2rem;">Here you can find information about my teaching activities.</p>
+          
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Guest Lecture - Linear Algebra, Explainable Artificial Intelligence</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Winter Semester 2024/25 • DHBW Stuttgart</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              Delivered a guest lecture on key concepts in linear algebra, aiming to equip students with the foundational understanding needed to follow the remainder of the course and comprehend the underlying mathematical structures.
+            </div>
+          </details>
 
-            // 4) g₁ = −3/2 · Im[ t·(1 − t⁴) / D ]
-            const num1 = cmul(t, csub([1, 0], t4));
-            const q1 = cdiv(num1, D);
-            const g1 = -1.5 * q1[1];
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Teaching Assistant, Introduction to Probability Theory and Statistics</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Winter Semester 2024/25 • TUM</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              Responsible for grading and providing feedback on homework assignments.
+            </div>
+          </details>
 
-            // 5) g₂ = −3/2 · Re[ t·(1 + t⁴) / D ]
-            const num2 = cmul(t, cadd([1, 0], t4));
-            const q2 = cdiv(num2, D);
-            const g2 = -1.5 * q2[0];
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Teaching Assistant, Elementary Applications of Mathematics in Computer Science and Engineering (STEM)</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Summer Semester 2025 • TUM</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              Led a tutorial group as part of a team of teaching assistants, supporting students in understanding and applying mathematical concepts relevant to STEM disciplines.
+            </div>
+          </details>
 
-            // 6) g₃ = Im[ (1 + t⁶) / D ] − 1/2
-            const num3 = cadd([1, 0], t6);
-            const q3 = cdiv(num3, D);
-            const g3 = q3[1] - 0.5;
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Teaching Assistant, Algebra</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Summer Semester 2025 • TUM</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              Responsible for grading and providing feedback on homework assignments and once assisted as a tutor.
+            </div>
+          </details>
 
-            // 7) Normierung auf die Einheitssphäre
-            const norm = 1 / (g1 * g1 + g2 * g2 + g3 * g3);
-            const x = g1 * norm;
-            const y = g2 * norm;
-            const z = g3 * norm;
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Guest Lecture - Categorical Foundations of XAI, Explainable Artificial Intelligence</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Winter Semester 2025/26 • DHBW Stuttgart</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              Delivered a guest lecture on the key concepts of category theory and institutional model theory to introduce an idea of a categorical framework for XAI.
+              <br>
+              <a href="./files/CTXAI.pdf" target="_blank" class="download-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; vertical-align: middle;">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path>
+                </svg>
+                View Slides (PDF)
+              </a>
+            </div>
+          </details>
 
-            target.set(x, y, z);
-          },
-          100, // U-Segmente (r)
-          100, // V-Segmente (θ)
-        );
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Teaching Assistant, Linear Algebra</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Winter Semester 2025/26 • TUM</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              Responsible for grading and providing feedback on homework assignments, and assisting students once a week in homework help sessions.
+            </div>
+          </details>
 
-      // … und im Hauptcode dann wie gehabt:
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Teaching Assistant, Algebra</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Summer Semester 2026 • TUM</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              Responsible for grading homework assignments and the final exam, as well as providing feedback to students.
+            </div>
+          </details>
+        </div>
+      </section>
 
-      const material = new THREE.MeshLambertMaterial({
-        color: 0xaaaaaa,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.3, // Wert zwischen 0 (unsichtbar) und 1 (undurchsichtig)
-        depthWrite: false, // damit du auch die Rückseiten siehst
-        flatShading: true,
-      });
+      <section id="research" class="section">
+        <div class="content-card reveal">
+          <h2>Research</h2>
+          <p style="margin-bottom: 2.5rem;">Here you will find details about my ongoing and past academic work.</p>
 
-      let mesh = new THREE.Mesh(makeGeometry(), material);
-      mesh.scale.set(2, 2, 2); // optional: Gesamt-Skalierung für bessere Sichtbarkeit
-      scene.add(mesh);
-      const amb = new THREE.AmbientLight(0xffffff, 0.4);
-      const dir = new THREE.DirectionalLight(0xffffff, 0.8);
-      dir.position.set(5, 5, 5);
-      scene.add(amb, dir);
+          <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-size: 1.4rem;">Academic Theses</h3>
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>The Jung Method for Resolving Surface Singularities</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Bachelor's Thesis, TUM • Supervised by Prof. Dr. Christian Liedtke</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              This thesis presents Jung’s method for the resolution of surface singularities in characteristic 0. Starting from a finite projection to the projective plane, it analyzes the associated branch curve, applies embedded resolution, and explains how the problem reduces to resolving cyclic quotient singularities.
+            </div>
+          </details>
+        </div>
+      </section>
 
-      const edges = new EdgesGeometry(makeGeometry());
-      const outline = new LineSegments(
-        edges,
-        new LineBasicMaterial({
-          color: 0x303030,
-          transparent: true,
-          opacity: 0.6,
-        }),
-      );
-      outline.scale.set(2, 2, 2); // optional: Gesamt-Skalierung für bessere Sichtbarkeit
-      scene.add(outline);
+      <section id="projects" class="section">
+        <div class="content-card reveal">
+          <h2>Projects</h2>
+          <p style="margin-bottom: 2.5rem;">Here you will find details about my ongoing and past projects.</p>
 
-      // In der animate-Funktion weiter rotieren lassen:
-      function animate() {
-        requestAnimationFrame(animate);
-        mesh.rotation.x += 0.004;
-        mesh.rotation.y += 0.004;
-        // Outline synchron drehen
-        outline.rotation.x = mesh.rotation.x;
-        outline.rotation.y = mesh.rotation.y;
+          <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-size: 1.4rem;">Seminars</h3>
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Homoclinic Points and Period Doubling Chaotic dynamics</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Apr 2023 • TUM</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              An introduction to homoclinic points and their connection to chaotic dynamics – defining the concept, exploring their link to homoclinic orbits, and highlighting their role in the emergence of chaos.
+            </div>
+          </details>
 
-        renderer.render(scene, camera);
-      }
-      animate();
-    </script>
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Classification of Isometries in the Euclidean Plane Geometry and Groups</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Sep 2024 • Hurwitz Seminar - TUM</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              A concise overview of all distance-preserving maps in the plane – translations, rotations, reflections and glide reflections – showing each arises from at most three reflections and forming the foundation for higher-dimensional generalizations.
+            </div>
+          </details>
+
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Rational Functions on Plane Curves Algebraic Curves</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Jun 2025 • TUM</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              The field of rational functions on projective plane curves over an algebraically closed field was investigated, including the reconstruction of the one-variable function field, its realization in the projective plane, decomposition into components and birational classification.
+            </div>
+          </details>
+
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>TBA Category Theory</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Oct 2025 • TUM</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              The seminar is ongoing.
+            </div>
+          </details>
+
+          <h3 style="margin-top: 2.5rem; margin-bottom: 1.5rem; font-size: 1.4rem;">Honors & Awards</h3>
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Winning Team - Reply Challenge at TUM.ai Makeathon 2024</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">May 2024 • TUM</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              My team won the Reply Challenge at the TUM.ai Makeathon 2024, making us one of four winning teams – each selected for the best solution in a specific challenge track. Our project involved an AI-based solution to a real-world business problem.
+            </div>
+          </details>
+          
+          <h3 style="margin-top: 2.5rem; margin-bottom: 1.5rem; font-size: 1.4rem;">Volunteer Experience</h3>
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Semester Representative</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Oct 2022 - Oct 2023 • TUM</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              As a Semester Representative, I played a role in facilitating communication between students and the university to improve the overall learning experience. I supported my fellow students by addressing their concerns and serving as a bridge between them and the faculty to ensure their voices were heard.
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section id="blog" class="section blog-section" style="display: none;">
+        <div class="content-card reveal">
+          <h2>Blog</h2>
+          <p>Thoughts, ideas, and more.</p>
+          
+          <details style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 16px; margin-top: 2rem; border: 1px solid var(--glass-border); cursor: pointer;">
+            <summary style="font-size: 1.15rem; font-weight: 500; outline: none; list-style-type: none;">
+              <b>On the Noetherian Property of Rings as Modules over Larger Rings</b><br>
+              <span style="font-size: 0.8em; opacity: 0.7; font-weight: normal; color: var(--text-muted);">April 24, 2025</span>
+            </summary>
+            
+            <article class="blog-post" style="margin-top: 1.5rem; border-top: 1px solid var(--glass-border); padding-top: 1.5rem; cursor: text;">
+              <h4>Question</h4>
+              <p>Let \( R \subseteq S \) be rings. Then, if \( R \) is Noetherian as an \( S \)-module, is \( R \) also Noetherian as an \( R \)-module?</p>
+              <p>At first glance one might expect “yes,” but the following counterexample shows that, in complete generality, the answer is no.</p>
+
+              <h4>Counterexample</h4>
+              <p>Let \(K\) be a field,</p>
+              <p>\[ R = K[x_1,x_2,\dots], \quad S = \text{End}_K(R), \]</p>
+              <p>and embed \(R\) into \(S\) via</p>
+              <p>\[ \iota\colon R \; \hookrightarrow \; S, \quad r \;\mapsto\; \phi_r, \]</p>
+              <p>where \(\phi_r\) is the endomorphism \(x\mapsto r\,x\). We view \(R\) as an \(S\)-module by</p>
+              <p>\[ f\cdot x \;=\; f(x), \quad f\in S,\ x\in R. \]</p>
+              <p>Note that this is not the usual multiplication in \(R\).</p>
+              <p>Let \(x \in R\) be nonzero. Then \[ S\cdot x = \{\,f(x)\mid f\in S\}\subseteq R. \] Given any \(y\in R\), extend \(x\) to a \(K\)-basis \(B\) of the vector space \(R\). Define a \(K\)-linear map \[ f\colon R\to R,\quad f(x)=y,\quad f(b)=0\ \text{for }b\in B\setminus\{x\}. \] This map is well-defined, linear, and extends uniquely to \( R \). Hence \(f\in S\) and \(f(x)=y\). Hence \(S\cdot x=R\).</p>
+              <p>Thus every nonzero element generates the entire \(S\)-module, so \(R\) is simple – and hence Noetherian – as an \(S\)-module. On the other hand, \(R=K[x_1,x_2,\dots]\) is not Noetherian as a ring, and therefore not Noetherian as an \(R\)-module.</p>
+
+              <h4>The General Factorization Case</h4>
+              <p>We now impose that the \(S\)-action on \(R\) factors through \(R\) itself.</p>
+
+              <h5>Theorem (General Factorization)</h5>
+              <p>Let \( R \subseteq S \) be rings, and suppose that \( R \) carries the structure of an \( S \)-module, where the \( S \)-action factors through \( R \). Then every \( R \)-submodule of \( R \) is already an \( S \)-submodule.</p>
+
+              <h6>Proof.</h6>
+              <p>Consider the ring homomorphism \( \varphi : S \to R \) through which the \( S \)-action on \( R \) is defined. Accordingly, for all \( s \in S \) and \( r \in R \), we have \[ s \cdot r = \varphi(s) \cdot r. \] Let \( M \subseteq R \) be an \( R \)-submodule. Then the \( S \)-action on \( M \) satisfies \[ S \cdot M = \varphi(S) \cdot M \subseteq R \cdot M \subseteq M. \] Hence, \( M \) is closed under the \( S \)-action and thus constitutes an \( S \)-submodule of \( R \).</p>
+
+              <h5>Corollary</h5>
+              <p>Under the hypotheses of the General Factorization Theorem, if \(R\) is Noetherian as an \(S\)-module, then \(R\) is Noetherian as an \(R\)-module.</p>
+
+              <h4>The Surjective Case</h4>
+              <p>Next, we consider the situation where \(R\) is a quotient of \(S\).</p>
+
+              <h5>Theorem (Surjective Case)</h5>
+              <p>Let \( R \subseteq S \) be rings, and let \( I \subseteq S \) be an ideal such that \[ R \cong S/I. \] In particular, \( R \) acquires the natural structure of an \( S \)-module. Under this identification, the \( S \)-submodules and \( R \)-submodules of \( R \) coincide.</p>
+
+              <h6>Proof.</h6>
+              <p>Consider the canonical surjective ring homomorphism \( \pi : S \to S/I \) through which the action of \( S \) on \( R \) is defined. Then, for all \( s \in S \) and \( r \in R \), the following holds: \[ s \cdot r = \pi(s) \cdot r. \] Let \( N \subseteq R \) be an \( S \)-submodule of \( R \). Then, \[ R \cdot N = \pi(S) \cdot N = S \cdot N \subseteq N. \] Thus, \( N \) is stable under the \( R \)-action, implying that \( N \) is also an \( R \)-submodule of \( R \). In view of the General Factorization Theorem, it follows that the \( S \)- and \( R \)-submodule structures on \( R \) are identical.</p>
+
+              <h5>Corollary</h5>
+              <p>Under the hypotheses of the Surjective Case, \(R\) is Noetherian as an \(S\)-module if and only if \(R\) is Noetherian as an \(R\)-module.</p>
+
+              <h5>Example</h5>
+              <p>Let \(R\) be any ring. Consider the evaluation homomorphism</p>
+              <p>\[ \varphi\colon R[x]\to R,\quad f(x)\mapsto f(0). \]</p>
+              <p>Then \(R\) becomes an \(R[x]\)-module by \(f\cdot r = f(0)\,r\). Since \(R\cong R[x]/(x)\), this falls under the Surjective Case, and one sees immediately that \(R\) is Noetherian as an \(R[x]\)-module exactly when it is Noetherian as a ring.</p>
+            </article>
+          </details>
+        </div>
+      </section>
+
+      <section id="contact" class="section">
+        <div class="content-card reveal">
+          <h2>Contact</h2>
+          <p>Email: <a href="mailto:jan.eickhoff@tum.de">jan.eickhoff@tum.de</a></p>
+          <p>LinkedIn: <a href="https://linkedin.com/in/janeickhoff" target="_blank" rel="noopener noreferrer">https://linkedin.com/in/janeickhoff</a></p>
+          <p>GitHub: <a href="https://github.com/eickhoffjan" target="_blank" rel="noopener noreferrer">https://github.com/eickhoffjan</a></p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js?v=8"></script>
   </body>
 </html>
