@@ -3,82 +3,116 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jan Eickhoff - Portfolio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./style.css?v=8" />
-    <!-- Three.js and Tween.js Import Map -->
+    <meta name="description" content="Portfolio of Jan Eickhoff, a Mathematics Master's student at the University of Bonn with interests in algebra, geometry, and topology." />
+    <meta name="theme-color" content="#080808" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Jan Eickhoff | Mathematics" />
+    <meta property="og:description" content="Mathematics Master's student at the University of Bonn." />
+    <meta property="og:image" content="https://eickhoffjan.github.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Jan Eickhoff, Mathematics at the University of Bonn" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Jan Eickhoff | Mathematics" />
+    <meta name="twitter:description" content="Mathematics Master's student at the University of Bonn." />
+    <meta name="twitter:image" content="https://eickhoffjan.github.io/og.png" />
+    <script>
+      (() => {
+        let theme = 'light';
+        try {
+          theme = localStorage.getItem('jan-site-theme') || theme;
+        } catch (_) {}
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+    <title>Jan Eickhoff | Mathematics</title>
+    <link rel="stylesheet" href="./style.css?v=21" />
+    <!-- Three.js Import Map -->
     <script type="importmap">
       {
         "imports": {
           "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
-          "three/examples/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/",
-          "@tweenjs/tween.js": "https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@21.0.0/dist/tween.esm.js"
+          "three/examples/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/"
         }
       }
     </script>
-    <script>
-      MathJax = {
-        tex: {
-          inlineMath: [['$', '$'], ['\\(', '\\)']]
-        },
-        svg: {
-          fontCache: 'global'
-        }
-      };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
     <!-- Background Canvas Container -->
     <div id="canvas-container">
       <canvas id="three-canvas"></canvas>
     </div>
+    <div class="ambient-glow" aria-hidden="true"></div>
 
     <!-- Global Navigation -->
     <header class="glass-header">
-      <div class="logo">JE</div>
+      <a class="logo" href="#home" aria-label="Jan Eickhoff home">
+        <span class="logo-text">Jan Eickhoff</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open navigation">
+        <span></span><span></span>
+      </button>
       <nav id="main-nav">
-        <a href="#home" class="nav-link active">Home</a>
         <a href="#about" class="nav-link">About</a>
-        <a href="#interests" class="nav-link">Interests</a>
-        <a href="#teaching" class="nav-link">Teaching</a>
         <a href="#research" class="nav-link">Research</a>
+        <a href="#teaching" class="nav-link">Teaching</a>
+        <a href="#education" class="nav-link">Education</a>
         <a href="#projects" class="nav-link">Projects</a>
         <!-- <a href="#blog" class="nav-link">Blog</a> -->
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
+        <span class="theme-label">Dark</span>
+      </button>
+      <span class="scroll-progress" aria-hidden="true"></span>
     </header>
 
     <!-- Scrollable Content -->
-    <main id="scroll-content">
+    <main id="main-content">
       <section id="home" class="section hero-section">
-        <div class="hero-content reveal" style="margin-top: 60vh;">
+        <div class="hero-content reveal">
           <h1>Jan Eickhoff</h1>
-          <p class="subtitle" style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 1.5rem; letter-spacing: 2px; text-transform: uppercase;">Student of Mathematics</p>
-          <p class="hint">Scroll to explore ↓</p>
+          <p class="hero-lead">Master's student in Mathematics at the University of Bonn.</p>
+          <div class="hero-actions">
+            <a class="primary-btn" href="#research">View work</a>
+            <a class="text-btn" href="#contact">Get in touch</a>
+          </div>
         </div>
+        <a class="scroll-cue" href="#about" aria-label="Scroll to about section"><span></span>Scroll to explore</a>
       </section>
 
       <section id="about" class="section">
         <div class="content-card reveal">
           <h2>About Me</h2>
-          <p>I am a Mathematics Bachelor's student at the Technical University of Munich.</p>
+          <p class="section-lead">I am a Mathematics Master's student at the University of Bonn.</p>
         </div>
       </section>
 
-      <section id="interests" class="section">
+      <section id="research" class="section">
         <div class="content-card reveal">
-          <h2>Interests</h2>
-          <p>My interests include algebra, geometry, and topology.</p>
+          <h2>Research</h2>
+
+          <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-size: 1.4rem;">Academic Theses</h3>
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>The Jung Method for Resolving Surface Singularities</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Bachelor's Thesis, TUM • Supervised by Prof. Dr. Christian Liedtke</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              This thesis presents Jung’s method for the resolution of surface singularities in characteristic 0. Starting from a finite projection to the projective plane, it analyzes the associated branch curve, applies embedded resolution, and explains how the problem reduces to resolving cyclic quotient singularities.
+            </div>
+          </details>
         </div>
       </section>
 
       <section id="teaching" class="section">
         <div class="content-card reveal">
           <h2>Teaching</h2>
-          <p style="margin-bottom: 2rem;">Here you can find information about my teaching activities.</p>
           
           <details class="expandable-card">
             <summary>
@@ -142,13 +176,6 @@
             </summary>
             <div class="expandable-info">
               Delivered a guest lecture on the key concepts of category theory and institutional model theory to introduce an idea of a categorical framework for XAI.
-              <br>
-              <a href="./files/CTXAI.pdf" target="_blank" class="download-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; vertical-align: middle;">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path>
-                </svg>
-                View Slides (PDF)
-              </a>
             </div>
           </details>
 
@@ -180,31 +207,33 @@
         </div>
       </section>
 
-      <section id="research" class="section">
+      <section id="education" class="section">
         <div class="content-card reveal">
-          <h2>Research</h2>
-          <p style="margin-bottom: 2.5rem;">Here you will find details about my ongoing and past academic work.</p>
+          <h2>Academic Journey</h2>
 
-          <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-size: 1.4rem;">Academic Theses</h3>
-          <details class="expandable-card">
-            <summary>
-              <div>
-                <b>The Jung Method for Resolving Surface Singularities</b><br>
-                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Bachelor's Thesis, TUM • Supervised by Prof. Dr. Christian Liedtke</span>
+          <div class="education-list">
+            <article class="education-row">
+              <span class="education-date">WS 2021/22 to SS 2026</span>
+              <div class="education-entry">
+                <h3>B.Sc. Mathematics</h3>
+                <p>Technical University of Munich</p>
               </div>
-              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
-            </summary>
-            <div class="expandable-info">
-              This thesis presents Jung’s method for the resolution of surface singularities in characteristic 0. Starting from a finite projection to the projective plane, it analyzes the associated branch curve, applies embedded resolution, and explains how the problem reduces to resolving cyclic quotient singularities.
-            </div>
-          </details>
+            </article>
+
+            <article class="education-row">
+              <span class="education-date">Since WS 2026/27</span>
+              <div class="education-entry">
+                <h3>M.Sc. Mathematics</h3>
+                <p>University of Bonn</p>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 
       <section id="projects" class="section">
         <div class="content-card reveal">
           <h2>Projects</h2>
-          <p style="margin-bottom: 2.5rem;">Here you will find details about my ongoing and past projects.</p>
 
           <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-size: 1.4rem;">Seminars</h3>
           <details class="expandable-card">
@@ -216,7 +245,7 @@
               <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
             </summary>
             <div class="expandable-info">
-              An introduction to homoclinic points and their connection to chaotic dynamics – defining the concept, exploring their link to homoclinic orbits, and highlighting their role in the emergence of chaos.
+              An introduction to homoclinic points and their connection to chaotic dynamics, defining the concept, exploring their link to homoclinic orbits, and highlighting their role in the emergence of chaos.
             </div>
           </details>
 
@@ -229,7 +258,7 @@
               <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
             </summary>
             <div class="expandable-info">
-              A concise overview of all distance-preserving maps in the plane – translations, rotations, reflections and glide reflections – showing each arises from at most three reflections and forming the foundation for higher-dimensional generalizations.
+              A concise overview of all distance-preserving maps in the plane, including translations, rotations, reflections and glide reflections. It shows that each arises from at most three reflections and forms the foundation for higher-dimensional generalizations.
             </div>
           </details>
 
@@ -249,13 +278,26 @@
           <details class="expandable-card">
             <summary>
               <div>
-                <b>TBA Category Theory</b><br>
-                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Oct 2025 • TUM</span>
+                <b>Localisation in Category Theory</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Oct 2025 • Category Theory by Examples • TUM</span>
               </div>
               <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
             </summary>
             <div class="expandable-info">
-              The seminar is ongoing.
+              An exploration of localisation in category theory, with a focus on different equivalent definitions and the universal property of formally inverting morphisms.
+            </div>
+          </details>
+
+          <details class="expandable-card">
+            <summary>
+              <div>
+                <b>Limits and Colimits in Category Theory</b><br>
+                <span style="font-size: 0.9em; opacity: 0.8; font-weight: normal;">Oct 2025 • Category Theory by Examples • TUM</span>
+              </div>
+              <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
+            </summary>
+            <div class="expandable-info">
+              An introduction to limits and colimits as universal constructions in category theory, illustrated through examples such as products, coproducts, equalizers and coequalizers.
             </div>
           </details>
 
@@ -269,7 +311,7 @@
               <span style="color: var(--text-muted); font-size: 1.25rem;">+</span>
             </summary>
             <div class="expandable-info">
-              My team won the Reply Challenge at the TUM.ai Makeathon 2024, making us one of four winning teams – each selected for the best solution in a specific challenge track. Our project involved an AI-based solution to a real-world business problem.
+              My team won the Reply Challenge at the TUM.ai Makeathon 2024, making us one of four winning teams, with each selected for the best solution in a specific challenge track. Our project involved an AI-based solution to a real-world business problem.
             </div>
           </details>
           
@@ -314,7 +356,7 @@
               <p>\[ f\cdot x \;=\; f(x), \quad f\in S,\ x\in R. \]</p>
               <p>Note that this is not the usual multiplication in \(R\).</p>
               <p>Let \(x \in R\) be nonzero. Then \[ S\cdot x = \{\,f(x)\mid f\in S\}\subseteq R. \] Given any \(y\in R\), extend \(x\) to a \(K\)-basis \(B\) of the vector space \(R\). Define a \(K\)-linear map \[ f\colon R\to R,\quad f(x)=y,\quad f(b)=0\ \text{for }b\in B\setminus\{x\}. \] This map is well-defined, linear, and extends uniquely to \( R \). Hence \(f\in S\) and \(f(x)=y\). Hence \(S\cdot x=R\).</p>
-              <p>Thus every nonzero element generates the entire \(S\)-module, so \(R\) is simple – and hence Noetherian – as an \(S\)-module. On the other hand, \(R=K[x_1,x_2,\dots]\) is not Noetherian as a ring, and therefore not Noetherian as an \(R\)-module.</p>
+              <p>Thus every nonzero element generates the entire \(S\)-module, so \(R\) is simple and hence Noetherian as an \(S\)-module. On the other hand, \(R=K[x_1,x_2,\dots]\) is not Noetherian as a ring, and therefore not Noetherian as an \(R\)-module.</p>
 
               <h4>The General Factorization Case</h4>
               <p>We now impose that the \(S\)-action on \(R\) factors through \(R\) itself.</p>
@@ -352,13 +394,20 @@
       <section id="contact" class="section">
         <div class="content-card reveal">
           <h2>Contact</h2>
-          <p>Email: <a href="mailto:jan.eickhoff@tum.de">jan.eickhoff@tum.de</a></p>
-          <p>LinkedIn: <a href="https://linkedin.com/in/janeickhoff" target="_blank" rel="noopener noreferrer">https://linkedin.com/in/janeickhoff</a></p>
-          <p>GitHub: <a href="https://github.com/eickhoffjan" target="_blank" rel="noopener noreferrer">https://github.com/eickhoffjan</a></p>
+          <div class="contact-grid">
+            <a class="contact-primary" href="mailto:janeickhoff.office@gmail.com"><span>Email</span><strong>janeickhoff.office@gmail.com</strong></a>
+            <a href="https://linkedin.com/in/janeickhoff" target="_blank" rel="noopener noreferrer"><span>LinkedIn</span><strong>janeickhoff</strong></a>
+            <a href="https://github.com/eickhoffjan" target="_blank" rel="noopener noreferrer"><span>GitHub</span><strong>eickhoffjan</strong></a>
+          </div>
         </div>
       </section>
     </main>
 
-    <script type="module" src="./main.js?v=8"></script>
+    <footer>
+      <p>© <span id="current-year">2026</span> Jan Eickhoff</p>
+      <a href="#home">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+
+    <script type="module" src="./main.js?v=15"></script>
   </body>
 </html>

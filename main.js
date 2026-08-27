@@ -2,17 +2,25 @@ import * as THREE from "three";
 import { ParametricGeometry } from "three/examples/jsm/geometries/ParametricGeometry.js";
 
 const canvas = document.getElementById("three-canvas");
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isCompactDevice = window.matchMedia("(max-width: 760px), (pointer: coarse)").matches;
+const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
 // --- SCENE SETUP ---
 const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x0a0a0c, 0.04);
+scene.fog = new THREE.FogExp2(0x080808, 0.04);
 
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 0, 18);
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: !isCompactDevice,
+  alpha: true,
+  powerPreference: "high-performance"
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, isCompactDevice ? 1.25 : 1.75));
 
 // Parallax and Scroll Groups
 const parallaxGroup = new THREE.Group();
@@ -129,47 +137,55 @@ const getSurfacePoint = (u, v, target, alpha = 0) => {
   );
 };
 
-const sliceCount = 90;
-const stackCount = 90;
+// A lighter mesh on touch devices keeps scrolling smooth without changing the concept.
+const sliceCount = isCompactDevice ? 42 : 72;
+const stackCount = isCompactDevice ? 42 : 72;
 const geometry = new ParametricGeometry((u, v, t) => getSurfacePoint(u, v, t, 0), sliceCount, stackCount);
 geometry.computeVertexNormals();
 
 const material = new THREE.MeshPhysicalMaterial({
-  color: 0x0f172a,
-  emissive: 0x070b14,
-  metalness: 0.95,
-  roughness: 0.15,
+  color: 0x0a0a0a,
+  emissive: 0x000000,
+  metalness: 0.15,
+  roughness: 0.72,
   side: THREE.DoubleSide,
   transparent: true,
-  opacity: 0.9,
+  opacity: 0.78,
   flatShading: true,
-  clearcoat: 1.0,
-  clearcoatRoughness: 0.1
+  clearcoat: 0.2,
+  clearcoatRoughness: 0.8
 });
 const mesh = new THREE.Mesh(geometry, material);
 mesh.scale.set(1.5, 1.5, 1.5);
 masterGroup.add(mesh);
 
-const wireframeMat = new THREE.LineBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending });
-const wireframe = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), wireframeMat);
+const wireframeMat = new THREE.MeshBasicMaterial({
+  color: 0xf1f1ec,
+  transparent: true,
+  opacity: isCompactDevice ? 0.13 : 0.22,
+  wireframe: true,
+  blending: THREE.AdditiveBlending
+});
+// Share the morphing geometry instead of rebuilding thousands of line edges while scrolling.
+const wireframe = new THREE.Mesh(geometry, wireframeMat);
 wireframe.scale.copy(mesh.scale);
 masterGroup.add(wireframe);
 
-// Lighting matching the new Apple Slate/Dark look
-scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-const pointLight1 = new THREE.PointLight(0xffffff, 400); // White
+// Neutral lighting for the monochrome plotter-like surface.
+scene.add(new THREE.AmbientLight(0xffffff, 0.24));
+const pointLight1 = new THREE.PointLight(0xffffff, 280);
 pointLight1.position.set(5, 8, 5);
 scene.add(pointLight1);
-const pointLight2 = new THREE.PointLight(0xa5b4fc, 300); // Soft accent blue
+const pointLight2 = new THREE.PointLight(0xffffff, 180);
 pointLight2.position.set(-5, -5, -5);
 scene.add(pointLight2);
-const pointLight3 = new THREE.PointLight(0xe2e8f0, 200); // Silver
+const pointLight3 = new THREE.PointLight(0xffffff, 140);
 pointLight3.position.set(0, 5, 8);
 scene.add(pointLight3);
 
 // Particles for flavor
 const particleGeo = new THREE.BufferGeometry();
-const particleCount = 200;
+const particleCount = isCompactDevice ? 70 : 170;
 const posArray = new Float32Array(particleCount * 3);
 for(let i=0; i < particleCount * 3; i++) {
   posArray[i] = (Math.random() - 0.5) * 30;
@@ -177,9 +193,9 @@ for(let i=0; i < particleCount * 3; i++) {
 particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 const particleMat = new THREE.PointsMaterial({
   size: 0.05,
-  color: 0x94a3b8, // Slate matching
+  color: 0xf1f1ec,
   transparent: true,
-  opacity: 0.4,
+  opacity: 0.18,
   blending: THREE.AdditiveBlending
 });
 const particles = new THREE.Points(particleGeo, particleMat);
@@ -189,6 +205,8 @@ scene.add(particles);
 let scrollY = 0;
 let mouseX = 0;
 let mouseY = 0;
+const header = document.querySelector('.glass-header');
+const scrollProgress = document.querySelector('.scroll-progress');
 
 // Modify rotational keyframes so we can appreciate the intermediate shapes better
 const keyframes = [
@@ -199,21 +217,46 @@ const keyframes = [
   { p: 1.0, rot: new THREE.Vector3(3.5, 12.56, 2.0), pos: new THREE.Vector3(0, 0, 0) }
 ];
 
-window.addEventListener("scroll", () => {
+const updatePageChrome = () => {
   scrollY = window.scrollY;
-});
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = scrollable > 0 ? Math.min(100, (scrollY / scrollable) * 100) : 0;
+  scrollProgress?.style.setProperty('--scroll-progress', `${progress}%`);
+  header?.classList.toggle('scrolled', scrollY > 24);
+};
 
-window.addEventListener("mousemove", (e) => {
-  mouseX = (e.clientX / window.innerWidth) - 0.5;
-  mouseY = (e.clientY / window.innerHeight) - 0.5;
-});
+window.addEventListener("scroll", updatePageChrome, { passive: true });
+updatePageChrome();
+
+if (canHover && !prefersReducedMotion) {
+  window.addEventListener("mousemove", (e) => {
+    mouseX = (e.clientX / window.innerWidth) - 0.5;
+    mouseY = (e.clientY / window.innerHeight) - 0.5;
+  }, { passive: true });
+}
+
+function updateSceneLayout() {
+  if (window.innerWidth >= 980) {
+    masterGroup.position.set(3.25, 0, 0);
+    masterGroup.scale.setScalar(1);
+  } else if (window.innerWidth >= 761) {
+    masterGroup.position.set(2.2, -0.2, 0);
+    masterGroup.scale.setScalar(0.9);
+  } else {
+    masterGroup.position.set(0, 1.8, 0);
+    masterGroup.scale.setScalar(0.68);
+  }
+}
 
 // Resizing
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isCompactDevice ? 1.25 : 1.75));
+  updateSceneLayout();
 });
+updateSceneLayout();
 
 // --- RENDER LOOP ---
 const clock = new THREE.Clock();
@@ -233,7 +276,8 @@ const targetVector = new THREE.Vector3();
 // Dynamically morph geometry based on scroll (resolving singularities)
 function updateSurfaceMorph(alpha) {
   // Only update if alpha actually changed significantly to save CPU
-  if (Math.abs(currentGeometryAlpha - alpha) < 0.005) return;
+  const morphStep = isCompactDevice ? 0.02 : 0.009;
+  if (Math.abs(currentGeometryAlpha - alpha) < morphStep) return;
   currentGeometryAlpha = alpha;
   
   const pos = geometry.attributes.position;
@@ -248,10 +292,6 @@ function updateSurfaceMorph(alpha) {
   }
   pos.needsUpdate = true;
   geometry.computeVertexNormals();
-  
-  // Re-generate wireframe
-  wireframe.geometry.dispose();
-  wireframe.geometry = new THREE.EdgesGeometry(geometry);
 }
 
 function updateScrollAnimation() {
@@ -299,11 +339,13 @@ function animate() {
   const dt = clock.getDelta();
 
   // Subtle continuous rotation for life
-  masterGroup.rotation.y += 0.05 * dt;
-  masterGroup.rotation.x += 0.03 * dt;
+  if (!prefersReducedMotion) {
+    masterGroup.rotation.y += 0.05 * dt;
+    masterGroup.rotation.x += 0.03 * dt;
+  }
   
   // Slowly rotate particles
-  particles.rotation.y -= 0.02 * dt;
+  if (!prefersReducedMotion) particles.rotation.y -= 0.02 * dt;
 
   // Parallax based on mouse
   const pTargetX = mouseY * 0.5;
@@ -324,8 +366,8 @@ const navLinks = document.querySelectorAll('.nav-link');
 
 const observerOptions = {
   root: null,
-  rootMargin: '0px',
-  threshold: 0.3 // Trigger when 30% of the section is visible
+  rootMargin: '-15% 0px -35% 0px',
+  threshold: 0.08
 };
 
 const observer = new IntersectionObserver((entries) => {
@@ -349,7 +391,56 @@ const observer = new IntersectionObserver((entries) => {
 
 sections.forEach(section => observer.observe(section));
 
-// Smooth scroll for nav links
+// Mobile navigation and smooth section changes
+const menuToggle = document.querySelector('.menu-toggle');
+const mainNav = document.getElementById('main-nav');
+
+function closeMenu() {
+  mainNav?.classList.remove('open');
+  menuToggle?.setAttribute('aria-expanded', 'false');
+  menuToggle?.setAttribute('aria-label', 'Open navigation');
+}
+
+menuToggle?.addEventListener('click', () => {
+  const isOpen = mainNav?.classList.toggle('open');
+  menuToggle.setAttribute('aria-expanded', String(Boolean(isOpen)));
+  menuToggle.setAttribute('aria-label', isOpen ? 'Close navigation' : 'Open navigation');
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeMenu();
+});
+
+const themeToggle = document.querySelector('.theme-toggle');
+const themeLabel = document.querySelector('.theme-label');
+const themeColor = document.querySelector('meta[name="theme-color"]');
+
+function applyTheme(theme, persist = false) {
+  document.documentElement.dataset.theme = theme;
+  const isLight = theme === 'light';
+  wireframeMat.opacity = isLight
+    ? (isCompactDevice ? 0.3 : 0.46)
+    : (isCompactDevice ? 0.13 : 0.22);
+  particleMat.opacity = isLight ? 0.25 : 0.18;
+  themeLabel.textContent = isLight ? 'Dark' : 'Light';
+  themeToggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+  themeToggle.setAttribute('aria-pressed', String(isLight));
+  themeColor?.setAttribute('content', isLight ? '#f6f6f3' : '#050505');
+
+  if (persist) {
+    try {
+      localStorage.setItem('jan-site-theme', theme);
+    } catch (_) {}
+  }
+}
+
+applyTheme(document.documentElement.dataset.theme || 'dark');
+
+themeToggle?.addEventListener('click', () => {
+  const nextTheme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+  applyTheme(nextTheme, true);
+});
+
 navLinks.forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
@@ -358,5 +449,8 @@ navLinks.forEach(link => {
     if(targetSection) {
       targetSection.scrollIntoView({ behavior: 'smooth' });
     }
+    closeMenu();
   });
 });
+
+document.getElementById('current-year').textContent = new Date().getFullYear();
