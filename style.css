@@ -12,13 +12,13 @@
 }
 
 :root[data-theme="light"] {
-  --black: #f6f6f3;
+  --black: #ffffff;
   --white: #090909;
   --soft: #3f3f3d;
   --faint: #6c6c68;
   --line: rgba(9, 9, 9, 0.22);
-  --header-bg: rgba(246, 246, 243, 0.88);
-  --menu-bg: rgba(246, 246, 243, 0.98);
+  --header-bg: rgba(255, 255, 255, 0.88);
+  --menu-bg: rgba(255, 255, 255, 0.98);
   color-scheme: light;
 }
 

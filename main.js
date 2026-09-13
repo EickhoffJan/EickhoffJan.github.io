@@ -425,7 +425,7 @@ function applyTheme(theme, persist = false) {
   themeLabel.textContent = isLight ? 'Dark' : 'Light';
   themeToggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
   themeToggle.setAttribute('aria-pressed', String(isLight));
-  themeColor?.setAttribute('content', isLight ? '#f6f6f3' : '#050505');
+  themeColor?.setAttribute('content', isLight ? '#ffffff' : '#050505');
 
   if (persist) {
     try {
