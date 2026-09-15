@@ -5,6 +5,7 @@ const canvas = document.getElementById("three-canvas");
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const isCompactDevice = window.matchMedia("(max-width: 760px), (pointer: coarse)").matches;
 const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+const pixelRatioLimit = isCompactDevice ? 2 : 1.75;
 
 // --- SCENE SETUP ---
 const scene = new THREE.Scene();
@@ -15,12 +16,12 @@ camera.position.set(0, 0, 18);
 
 const renderer = new THREE.WebGLRenderer({
   canvas,
-  antialias: !isCompactDevice,
+  antialias: true,
   alpha: true,
   powerPreference: "high-performance"
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, isCompactDevice ? 1.25 : 1.75));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioLimit));
 
 // Parallax and Scroll Groups
 const parallaxGroup = new THREE.Group();
@@ -137,9 +138,9 @@ const getSurfacePoint = (u, v, target, alpha = 0) => {
   );
 };
 
-// A lighter mesh on touch devices keeps scrolling smooth without changing the concept.
-const sliceCount = isCompactDevice ? 42 : 72;
-const stackCount = isCompactDevice ? 42 : 72;
+// Keep enough detail on touch screens for a crisp object while remaining responsive.
+const sliceCount = isCompactDevice ? 56 : 72;
+const stackCount = isCompactDevice ? 56 : 72;
 const geometry = new ParametricGeometry((u, v, t) => getSurfacePoint(u, v, t, 0), sliceCount, stackCount);
 geometry.computeVertexNormals();
 
@@ -151,7 +152,7 @@ const material = new THREE.MeshPhysicalMaterial({
   side: THREE.DoubleSide,
   transparent: true,
   opacity: 0.78,
-  flatShading: true,
+  flatShading: false,
   clearcoat: 0.2,
   clearcoatRoughness: 0.8
 });
@@ -253,7 +254,7 @@ window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isCompactDevice ? 1.25 : 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioLimit));
   updateSceneLayout();
 });
 updateSceneLayout();
