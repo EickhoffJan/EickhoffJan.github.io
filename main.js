@@ -22,6 +22,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioLimit));
+renderer.setClearColor(0xffffff, 0);
 
 // Parallax and Scroll Groups
 const parallaxGroup = new THREE.Group();
