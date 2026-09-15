@@ -400,11 +400,12 @@ function applyTheme(theme, persist = false) {
   document.documentElement.dataset.theme = theme;
   const isLight = theme === 'light';
   material.color.setHex(isLight ? 0xffffff : 0x0a0a0a);
+  material.opacity = isLight ? 0.28 : 0.78;
   wireframeMat.color.setHex(isLight ? 0x111111 : 0xf1f1ec);
   wireframeMat.blending = isLight ? THREE.NormalBlending : THREE.AdditiveBlending;
   wireframeMat.needsUpdate = true;
   wireframeMat.opacity = isLight
-    ? (isCompactDevice ? 0.3 : 0.46)
+    ? (isCompactDevice ? 0.25 : 0.34)
     : (isCompactDevice ? 0.13 : 0.22);
   themeLabel.textContent = isLight ? 'Dark' : 'Light';
   themeToggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
