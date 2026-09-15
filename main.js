@@ -184,24 +184,6 @@ const pointLight3 = new THREE.PointLight(0xffffff, 140);
 pointLight3.position.set(0, 5, 8);
 scene.add(pointLight3);
 
-// Particles for flavor
-const particleGeo = new THREE.BufferGeometry();
-const particleCount = isCompactDevice ? 70 : 170;
-const posArray = new Float32Array(particleCount * 3);
-for(let i=0; i < particleCount * 3; i++) {
-  posArray[i] = (Math.random() - 0.5) * 30;
-}
-particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-const particleMat = new THREE.PointsMaterial({
-  size: 0.05,
-  color: 0xf1f1ec,
-  transparent: true,
-  opacity: 0.18,
-  blending: THREE.AdditiveBlending
-});
-const particles = new THREE.Points(particleGeo, particleMat);
-scene.add(particles);
-
 // --- SCROLL & PARALLAX LOGIC ---
 let scrollY = 0;
 let mouseX = 0;
@@ -345,9 +327,6 @@ function animate() {
     masterGroup.rotation.x += 0.03 * dt;
   }
   
-  // Slowly rotate particles
-  if (!prefersReducedMotion) particles.rotation.y -= 0.02 * dt;
-
   // Parallax based on mouse
   const pTargetX = mouseY * 0.5;
   const pTargetY = mouseX * 0.5;
@@ -422,7 +401,6 @@ function applyTheme(theme, persist = false) {
   wireframeMat.opacity = isLight
     ? (isCompactDevice ? 0.3 : 0.46)
     : (isCompactDevice ? 0.13 : 0.22);
-  particleMat.opacity = isLight ? 0.25 : 0.18;
   themeLabel.textContent = isLight ? 'Dark' : 'Light';
   themeToggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
   themeToggle.setAttribute('aria-pressed', String(isLight));
