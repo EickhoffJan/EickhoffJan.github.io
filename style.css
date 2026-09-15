@@ -39,6 +39,8 @@ html {
 }
 
 body {
+  /* Keep the negative canvas layer above the body background. */
+  isolation: isolate;
   min-width: 320px;
   overflow-x: hidden;
   color: var(--white);
