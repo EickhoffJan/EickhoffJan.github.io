@@ -399,6 +399,10 @@ const themeColor = document.querySelector('meta[name="theme-color"]');
 function applyTheme(theme, persist = false) {
   document.documentElement.dataset.theme = theme;
   const isLight = theme === 'light';
+  material.color.setHex(isLight ? 0xffffff : 0x0a0a0a);
+  wireframeMat.color.setHex(isLight ? 0x111111 : 0xf1f1ec);
+  wireframeMat.blending = isLight ? THREE.NormalBlending : THREE.AdditiveBlending;
+  wireframeMat.needsUpdate = true;
   wireframeMat.opacity = isLight
     ? (isCompactDevice ? 0.3 : 0.46)
     : (isCompactDevice ? 0.13 : 0.22);

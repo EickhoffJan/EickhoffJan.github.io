@@ -107,7 +107,7 @@ summary:focus-visible {
 
 :root[data-theme="light"] #three-canvas {
   opacity: 1;
-  filter: invert(1) grayscale(1) contrast(1.8);
+  filter: grayscale(1) contrast(1.45);
   mix-blend-mode: normal;
 }
 
