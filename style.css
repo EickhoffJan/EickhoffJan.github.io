@@ -381,6 +381,53 @@ summary:focus-visible {
 }
 
 /* Expandable entries */
+.preprint-entry {
+  border-bottom: 1px solid var(--line);
+}
+
+.preprint-abstract {
+  max-width: 680px;
+  color: var(--soft);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.preprint-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--white);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.preprint-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.8rem 1.8rem;
+  margin-top: 1.4rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.preprint-links a {
+  text-underline-offset: 0.3em;
+  text-decoration-color: var(--line);
+  overflow-wrap: anywhere;
+}
+
+.preprint-links a:hover {
+  text-decoration-color: currentColor;
+}
+
+.preprint-doi span {
+  color: var(--faint);
+  font-weight: 500;
+}
+
 .expandable-card {
   border-top: 1px solid var(--line);
 }
