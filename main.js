@@ -164,7 +164,7 @@ masterGroup.add(mesh);
 const wireframeMat = new THREE.MeshBasicMaterial({
   color: 0xf1f1ec,
   transparent: true,
-  opacity: isCompactDevice ? 0.13 : 0.22,
+  opacity: isCompactDevice ? 0.4 : 0.5,
   wireframe: true,
   blending: THREE.AdditiveBlending
 });
@@ -401,12 +401,12 @@ function applyTheme(theme, persist = false) {
   const isLight = theme === 'light';
   material.color.setHex(isLight ? 0xffffff : 0x0a0a0a);
   material.opacity = isLight ? 0.28 : 0.78;
-  wireframeMat.color.setHex(isLight ? 0x111111 : 0xf1f1ec);
+  wireframeMat.color.setHex(isLight ? 0x111111 : 0xffffff);
   wireframeMat.blending = isLight ? THREE.NormalBlending : THREE.AdditiveBlending;
   wireframeMat.needsUpdate = true;
   wireframeMat.opacity = isLight
     ? (isCompactDevice ? 0.25 : 0.34)
-    : (isCompactDevice ? 0.13 : 0.22);
+    : (isCompactDevice ? 0.4 : 0.5);
   themeLabel.textContent = isLight ? 'Dark' : 'Light';
   themeToggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
   themeToggle.setAttribute('aria-pressed', String(isLight));
