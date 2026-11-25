@@ -186,7 +186,6 @@ pointLight3.position.set(0, 5, 8);
 scene.add(pointLight3);
 
 // --- SCROLL & PARALLAX LOGIC ---
-let scrollY = 0;
 let mouseX = 0;
 let mouseY = 0;
 const header = document.querySelector('.glass-header');
@@ -201,12 +200,16 @@ const keyframes = [
   { p: 1.0, rot: new THREE.Vector3(3.5, 12.56, 2.0), pos: new THREE.Vector3(0, 0, 0) }
 ];
 
+function getScrollProgress() {
+  const scroller = document.scrollingElement || document.documentElement;
+  const scrollable = scroller.scrollHeight - scroller.clientHeight;
+  // Elastic scrolling can briefly go past either edge of the page.
+  return scrollable > 0 ? THREE.MathUtils.clamp(window.scrollY / scrollable, 0, 1) : 0;
+}
+
 const updatePageChrome = () => {
-  scrollY = window.scrollY;
-  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = scrollable > 0 ? Math.min(100, (scrollY / scrollable) * 100) : 0;
-  scrollProgress?.style.setProperty('--scroll-progress', `${progress}%`);
-  header?.classList.toggle('scrolled', scrollY > 24);
+  scrollProgress?.style.setProperty('--scroll-progress', `${getScrollProgress() * 100}%`);
+  header?.classList.toggle('scrolled', window.scrollY > 24);
 };
 
 window.addEventListener("scroll", updatePageChrome, { passive: true });
@@ -279,9 +282,7 @@ function updateSurfaceMorph(alpha) {
 }
 
 function updateScrollAnimation() {
-  const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-  // Prevent division by zero if page can't scroll
-  const scrollPercent = scrollHeight > 0 ? scrollY / scrollHeight : 0;
+  const scrollPercent = getScrollProgress();
   
   // Find current and next keyframe
   let startFrame = keyframes[0];
