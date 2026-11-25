@@ -380,6 +380,12 @@ summary:focus-visible {
   color: var(--white);
 }
 
+.research-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+}
+
 /* Expandable entries */
 .preprint-entry {
   border-bottom: 1px solid var(--line);
@@ -403,17 +409,16 @@ summary:focus-visible {
 }
 
 .preprint-links {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.8rem 1.8rem;
+  display: grid;
+  gap: 0.2rem;
   margin-top: 1.4rem;
-  font-size: 0.875rem;
-  font-weight: 700;
+  list-style: none;
+  font-size: 0.82rem;
   line-height: 1.6;
 }
 
 .preprint-links a {
+  font-weight: 700;
   text-underline-offset: 0.3em;
   text-decoration-color: var(--line);
   overflow-wrap: anywhere;
@@ -566,7 +571,7 @@ summary:focus-visible {
 .contact-grid {
   display: grid;
   margin-top: 1.5rem;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 1fr));
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -575,7 +580,7 @@ summary:focus-visible {
   position: relative;
   display: flex;
   min-height: 108px;
-  padding: 1rem 2.5rem 1rem 1rem;
+  padding: 1rem;
   flex-direction: column;
   justify-content: space-between;
   color: var(--white) !important;
